@@ -45,11 +45,16 @@ try {
                                     mesa.mesa_orden as orden,
                                     mesa.mesa_estado as estado,
                                     pedi.pedi_id as usada,
+                                    pedi.pedi_fecha as fechapedido,
+                                    pedi.pege_idmesero as idmesero,
+                                    CONCAT(pena.pena_primernombre, ' ', pena.pena_primerapellido) as mesero,
+                                    TIMESTAMPDIFF(MINUTE, pedi.pedi_fecha, NOW()) as minutos,
                                     espe.espe_id as idestadopedido,
                                     espe.espe_descripcion as descripcionestadopedido
                                     FROM pinchetas_restaurante.mesa mesa
                                     LEFT JOIN pinchetas_restaurante.pedido pedi on (pedi.mesa_id = mesa.mesa_id and pedi.espe_id in (1,2,3,4,5))
                                     LEFT JOIN pinchetas_restaurante.estadopedido espe on (espe.espe_id = pedi.espe_id)
+                                    LEFT JOIN pinchetas_general.personanatural pena on (pedi.pege_idmesero = pena.pege_id)
                                     WHERE mesa.mesa_estado = 'ACTIVO'
                                     order by mesa.mesa_orden; ");
         $sql->execute();

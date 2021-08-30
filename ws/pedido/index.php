@@ -97,7 +97,7 @@ try {
               VALUES (?, ?, ?, ?, ?, ?, ?); ";
             
       $sql = $conexion->prepare($sql);
-      $sql->bindValue(1, $fecha);
+      $sql->bindValue(1, $date);
       $sql->bindValue(2, $registradopor);
       $sql->bindValue(3, $idmesa);
       $sql->bindValue(4, $idestado);

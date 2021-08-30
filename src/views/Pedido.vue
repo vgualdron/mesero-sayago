@@ -23,7 +23,9 @@
                     <b-card-body class="p-3 clearfix text-center">
                       <!--<i :class="aplicacion.icono + ' bg-primary p-3 font-2xl mr-3 float-left'"></i>-->
                       <b-badge v-if="item.usada == null" variant="success">DISPONIBLE</b-badge>
-                      <b-badge v-else variant="info">PEDIDO {{item.descripcionestadopedido}}</b-badge>
+                      <b-badge v-else variant="info">PEDIDO {{item.descripcionestadopedido}}</b-badge><br>
+                      <b-badge v-if="item.usada" variant="secondary">MESERO: {{item.mesero}}</b-badge><br>
+                      <b-badge v-if="item.usada" variant="dark">TIEMPO: {{item.minutos}} minutos</b-badge>
                     </b-card-body>
                     <div slot="footer">
                       <span>Ir a la mesa<i class="fa fa-angle-right float-right font-lg"></i></span>
@@ -64,7 +66,8 @@ export default {
     return {
       items: [],
       objeto: null,
-      showModal: false
+      showModal: false,
+      interval: null
     };
   },
   methods: {
@@ -104,6 +107,10 @@ export default {
   },
   mounted: function() {
     this.$loader.close();
+    this.interval = setInterval(() => this.listarMesas(), 30000);
+  },
+  beforeDestroy: function() {
+    clearInterval(this.interval);
   }
 };
 </script>
