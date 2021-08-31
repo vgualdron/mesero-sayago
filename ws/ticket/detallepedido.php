@@ -77,7 +77,7 @@ function printTicket($mesa, $producto, $pedido, $type, $printerName) {
         $printer->text("SE CANCELA \n");
     } else if ($type == 'EDIT') {
         $productoViejo = $producto['productoviejo'];
-        $printer->text("SE CAMBIA \n");
+        $printer->text("MODIFICAMOS \n");
         $printer->feed(1);
         $printer->setJustification(Printer::JUSTIFY_LEFT);
         $printer->setTextSize(1,1);
