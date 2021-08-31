@@ -3,7 +3,7 @@
     <b-row>
       <b-col cols="12">
         <b-btn
-          class="ml-3"
+          class="ml-3 mt-3"
           @click.stop="listarMesas"
           variant="primary">Actualizar</b-btn>
         <b-card border-variant="primary" header-bg-variant="primary" header="<strong>Seleccionar Mesa</strong>" tag="article" class="m-3 mt-3">
