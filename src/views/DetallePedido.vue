@@ -389,6 +389,7 @@ export default {
       ],
       items: [],
       objeto: null,
+      objetoViejo: null,
       cantidadProductoVieja: 0,
       idMesaNueva: null,
       mesasDisponibles: [],
@@ -407,6 +408,17 @@ export default {
     'pedido.telefonocliente': function (valor) {
       if (valor.length > 5) {
         this.consultarClienteDelPedidoPorTelefono(valor);
+      }
+    },
+    'objeto.idproducto': function (valor) {
+      const tipoProducto = this.tipoProductos.find((tipoProducto) => {
+        return tipoProducto.id == this.objeto.idtipoproducto;
+      });
+      if (tipoProducto && tipoProducto.productos) {
+        const producto = tipoProducto.productos.find((producto) => {
+          return producto.id == this.objeto.idproducto;
+        });
+        this.objeto.descripcionproducto = producto.descripcion;
       }
     }
   },
@@ -432,6 +444,7 @@ export default {
     cargarFormulario: function(obj, operacion) {
       this.tipoOperacion = operacion;
       this.objeto = obj;
+      this.objetoViejo = null;
       if (obj === null) {
         this.objeto = {
           id: null,
@@ -458,6 +471,9 @@ export default {
           precioproducto: obj.precioproducto,
           descripcion: obj.descripcion
         };
+        this.objetoViejo = {
+          ...this.objeto
+        }
       }
       this.showModal = true;
     },
@@ -869,6 +885,8 @@ export default {
       var self = this;
       self.$set(self.objeto, "token", window.localStorage.getItem("token"));
       self.$set(self.objeto, "idpedido", this.pedido.id);
+      self.$set(self.objeto, "mesa", this.mesa);
+      self.$set(self.objeto, "pedido", this.pedido);
       this.$alertify
         .confirmWithTitle(
           "Guardar",
@@ -902,6 +920,9 @@ export default {
       self.$set(self.objeto, "token", window.localStorage.getItem("token"));
       self.$set(self.objeto, "idpedido", this.pedido.id);
       self.$set(self.objeto, "cantidadproductosumar", (parseInt(self.cantidadProductoVieja) - parseInt(self.objeto.cantidadproducto)));
+      self.$set(self.objeto, "productoviejo", this.objetoViejo);
+      self.$set(self.objeto, "mesa", this.mesa);
+      self.$set(self.objeto, "pedido", this.pedido);
       this.$alertify
         .confirmWithTitle(
           "Modificar",
@@ -932,6 +953,8 @@ export default {
       var self = this;
       let token = window.localStorage.getItem("token");
       self.$set(self.objeto, "token", window.localStorage.getItem("token"));
+      self.$set(self.objeto, "mesa", this.mesa);
+      self.$set(self.objeto, "pedido", this.pedido);
       this.$alertify
         .confirmWithTitle(
           "Eliminar",
@@ -939,7 +962,7 @@ export default {
           function() {
             self.showModal = false;
             self.$loader.open({ message: "Eliminando ..." });
-            self.$http.delete("ws/detallepedido/", {params: {id: self.objeto.id, token: token}}).then(resp => {
+            self.$http.delete("ws/detallepedido/", {params: {id: self.objeto.id, token: token}, data: self.objeto }).then(resp => {
                 self.$loader.close();
                 self.listar();
                 self.$toast.success(resp.data.mensaje);

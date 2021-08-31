@@ -8,6 +8,8 @@ require_once("../conexion.php");
 require_once("../encrypted.php");
 $conexion = new Conexion();
 
+require_once("../ticket/detallepedido.php");
+
 $frm = json_decode(file_get_contents('php://input'), true);
 
 try {
@@ -100,13 +102,22 @@ try {
   // Crear un nuevo post
   else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
       $input = $_POST;
-          
+
+      $idestadopedido = 0;
       $descripcion = $frm['descripcion'];
+      $pedido = $frm['pedido'];
       $idpedido = $frm['idpedido'];
       $idproducto = $frm['idproducto'];
       $cantidadproducto = $frm['cantidadproducto'];
       $registradopor = openCypher('decrypt', $frm['token']);
       $date = date("Y-m-d H:i:s");
+
+      if ($pedido) {
+        $idestadopedido = $pedido['idestado'];
+      }
+      if ($idestadopedido > 1) {
+        printCommand($frm, 'ADD');
+      }
       
       $sql = "INSERT INTO 
               pinchetas_restaurante.detallepedido(depe_descripcion, pedi_id, prod_id, prod_costo, prod_cantidad, prod_precio, depe_registradopor, depe_fechacambio)
@@ -151,6 +162,16 @@ try {
       $cantidadproducto = $frm['cantidadproducto'];
       $registradopor = openCypher('decrypt', $frm['token']);
       $date = date("Y-m-d H:i:s");
+
+      $idestadopedido = 0;
+      $pedido = $frm['pedido'];
+
+      if ($pedido) {
+        $idestadopedido = $pedido['idestado'];
+      }
+      if ($idestadopedido > 1) {
+        printCommand($frm, 'EDIT');
+      }
       
       $sql = "UPDATE pinchetas_restaurante.detallepedido 
               SET depe_descripcion = ?,
@@ -195,6 +216,16 @@ try {
       $input = $_GET;
       $id = $input['id'];
       $registradopor = openCypher('decrypt', $input['token']);
+
+      $idestadopedido = 0;
+      $pedido = $frm['pedido'];
+
+      if ($pedido) {
+        $idestadopedido = $pedido['idestado'];
+      }
+      if ($idestadopedido > 1) {
+        printCommand($frm, 'CANCEL');
+      }
 
       $date = date("Y-m-d H:i:s");
       
