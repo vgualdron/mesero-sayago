@@ -638,6 +638,8 @@ export default {
       this.clienteFE = {
         ...this.clienteFEBase
       }
+	  this.clienteFE.identificationObject.number = '';
+	  this.clienteFEBase.identificationObject.number = '';
     },
     getClientAlegra: function() {
       this.$loader.open({ message: "Cargando ..." });
@@ -648,6 +650,7 @@ export default {
       this.$http.get("ws/cliente/", { params: frm }).then(resp => {
         if (resp.data.identificationObject) {
           self.clienteFE = {...resp.data};
+		  self.clienteFE.identification = null;
         } else {
           self.resetClient();
         }

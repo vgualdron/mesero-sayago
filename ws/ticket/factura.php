@@ -216,6 +216,8 @@ function printInvoice($frm, $printerName) {
         $printer->text(' $' . number_format(($producto["cantidadproducto"])*($producto["precioproducto"]), 0, ',', '.') ."\n");
         $printer->selectPrintMode();
     }
+	
+	$propina = $total * 0.10;
 
     /*
         Terminamos de imprimir
@@ -224,9 +226,15 @@ function printInvoice($frm, $printerName) {
     $printer->text("------------------------------------------------\n");
     $printer->setEmphasis(true);
     $printer->setJustification(Printer::JUSTIFY_RIGHT);
-    $printer->setTextSize(2,2);
-    $printer->setEmphasis(true);
-    $printer->text("TOTAL: $".  number_format($total, 0, ',', '.') ."\n");
+    $printer->setTextSize(1,1);
+    $printer->setEmphasis(false);
+	
+    $printer->text("SUBTOTAL: $".  number_format($total, 0, ',', '.') ."\n");
+	$printer->text("PROPINA SUGERIDA: $".  number_format($propina, 0, ',', '.') ."\n");
+	$printer->setEmphasis(true);
+	$printer->setTextSize(2,2);
+	$printer->text("TOTAL: $".  number_format($total + $propina, 0, ',', '.') ."\n");
+	
     $printer->selectPrintMode();
     $printer->setJustification(Printer::JUSTIFY_LEFT);
     $printer->text("CANTIDAD PRODUCTOS: ". $totalCantidadProductos ."\n");
