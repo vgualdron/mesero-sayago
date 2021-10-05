@@ -71,6 +71,7 @@ class ApiAlegra extends PDO {
 
 		curl_setopt($curl, CURLOPT_URL, $url);
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
 
 		$result = curl_exec($curl);
 
@@ -232,8 +233,8 @@ class ApiAlegra extends PDO {
 	}
 
 	public function getClient($identificationNumber) {
-		$url = $this->getUrlApi().'/contacts?type=client&identification='.$identificationNumber;
-		$make_call = $this->callApi('GET', $url);
+		$url = $this->getUrlApi().'/contacts/?type=client&identification='.$identificationNumber;
+		$make_call = $this->callApi('GET', $url, false);
 		$response = json_decode($make_call, true);
 		return $response;
 	}
