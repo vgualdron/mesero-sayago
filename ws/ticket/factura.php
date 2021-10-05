@@ -33,15 +33,24 @@ $frm = json_decode(file_get_contents('php://input'), true);
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     
     $mesa = $frm['mesa'];
-    echo $mesa['descripcion'];
     $numeroMesa = substr($mesa['descripcion'], 4);
-    echo $numeroMesa;
-
-	if ($numeroMesa >= 25 && $numeroMesa <= 45) {
-		printInvoice($frm, 'SEGUNDO-PISO-PRINTER');
+	
+	$mystring = $mesa['descripcion'];
+	$findme   = 'PINCHELADAS';
+	
+	$pos = strpos($mystring, $findme);
+	
+	if ($pos === false) {
+		if ($numeroMesa >= 25 && $numeroMesa <= 45) {
+			printInvoice($frm, 'SEGUNDO-PISO-PRINTER');
+		} else {
+			printInvoice($frm, 'POS-80');
+		}
 	} else {
-		printInvoice($frm, 'POS-80');
+		printInvoice($frm, 'KIOSCO-PRINTER');
 	}
+
+	
 }
 
 function printInvoice($frm, $printerName) {
