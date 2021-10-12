@@ -36,24 +36,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $numeroMesa = substr($mesa['descripcion'], 4);
 	
 	$mystring = $mesa['descripcion'];
-	$findme   = 'PINCHELADAS';
+	$findme = 'PINCHELADAS';
 	
 	$pos = strpos($mystring, $findme);
+    $tienePropina = true;
+
+    if (strpos($mystring, 'DOMICILIO') === true || strpos($mystring, 'DE LLEVAR') === true) {
+        $tienePropina = false;
+    }
 	
 	if ($pos === false) {
 		if ($numeroMesa >= 25 && $numeroMesa <= 45) {
-			printInvoice($frm, 'SEGUNDO-PISO-PRINTER');
+			printInvoice($frm, 'SEGUNDO-PISO-PRINTER', $tienePropina);
 		} else {
-			printInvoice($frm, 'POS-80');
+			printInvoice($frm, 'POS-80', $tienePropina);
 		}
 	} else {
-		printInvoice($frm, 'KIOSCO-PRINTER');
+		printInvoice($frm, 'KIOSCO-PRINTER', $tienePropina);
 	}
 
 	
 }
 
-function printInvoice($frm, $printerName) {
+function printInvoice($frm, $printerName, $tienePropina = false) {
     $conexion = new Conexion();
     $conexion ->query("SET NAMES 'utf8';");
 
@@ -226,7 +231,7 @@ function printInvoice($frm, $printerName) {
         $printer->selectPrintMode();
     }
 	
-	$propina = $total * 0.10;
+	$propina = 0;
 
     /*
         Terminamos de imprimir
@@ -238,8 +243,12 @@ function printInvoice($frm, $printerName) {
     $printer->setTextSize(1,1);
     $printer->setEmphasis(false);
 	
-    $printer->text("SUBTOTAL: $".  number_format($total, 0, ',', '.') ."\n");
-	$printer->text("PROPINA SUGERIDA: $".  number_format($propina, 0, ',', '.') ."\n");
+    if ($tienePropina === true) {
+        $propina = $total * 0.10;
+        $printer->text("SUBTOTAL: $".  number_format($total, 0, ',', '.') ."\n");
+        $printer->text("PROPINA SUGERIDA: $".  number_format($propina, 0, ',', '.') ."\n");
+    }
+
 	$printer->setEmphasis(true);
 	$printer->setTextSize(2,2);
 	$printer->text("TOTAL: $".  number_format($total + $propina, 0, ',', '.') ."\n");
