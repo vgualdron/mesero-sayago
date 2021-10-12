@@ -39,10 +39,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	$findme = 'PINCHELADAS';
 	
 	$pos = strpos($mystring, $findme);
-    $tienePropina = true;
+    $tienePropina = false;
 
-    if (strpos($mystring, 'DOMICILIO') === true || strpos($mystring, 'DE LLEVAR') === true) {
-        $tienePropina = false;
+    if (strpos($mystring, 'DOMICILIO') === false && strpos($mystring, 'DE LLEVAR') === false) {
+        $tienePropina = true;
     }
 	
 	if ($pos === false) {
