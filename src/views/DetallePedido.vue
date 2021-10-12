@@ -189,9 +189,9 @@
                   </b-form-select>
                   
                   <b-form-checkbox
-                    id="checkbox-1"
+                    id="checkbox-2"
                     v-model="asociarCliente"
-                    name="checkbox-1"
+                    name="checkbox-2"
                     value="true"
                     unchecked-value="false"
                     :disabled="isFE"
