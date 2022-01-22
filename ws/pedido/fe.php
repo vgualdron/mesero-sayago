@@ -56,6 +56,7 @@ try {
         "paymentForm" => "CASH",
         "paymentMethod" => $tipoPago
       );
+	 
 
       $invoice = $apiAlegra->makeStampInvoice($dataInvoice);
       $result = $apiAlegra->stampInvoice($invoice);
