@@ -36,7 +36,7 @@ class ApiAlegra extends PDO {
 	}
 	
 	public function getIdCategory($name) {
-		return $this->getCategoryItem($name)['id'];
+		return $this->getCategoryItem($name)[0]['id'];
 	}
 	
 	public function getPreReference() {
@@ -90,16 +90,9 @@ class ApiAlegra extends PDO {
 	}
 
 	public function getItem($data) {
-		$unwanted_array = array('Š'=>'S', 'š'=>'s', 'Ž'=>'Z', 'ž'=>'z', 'À'=>'A', 'Á'=>'A', 'Â'=>'A', 'Ã'=>'A', 'Ä'=>'A', 'Å'=>'A',                                     'Æ'=>'A', 'Ç'=>'C', 'È'=>'E', 'É'=>'E',
-        'Ê'=>'E', 'Ë'=>'E', 'Ì'=>'I', 'Í'=>'I', 'Î'=>'I', 'Ï'=>'I', 'Ñ'=>'N', 'Ò'=>'O', 'Ó'=>'O', 'Ô'=>'O', 'Õ'=>'O', 'Ö'=>'O', 'Ø'=>'O', 'Ù'=>'U',
-        'Ú'=>'U', 'Û'=>'U', 'Ü'=>'U', 'Ý'=>'Y', 'Þ'=>'B', 'ß'=>'Ss', 'à'=>'a', 'á'=>'a', 'â'=>'a', 'ã'=>'a', 'ä'=>'a', 'å'=>'a', 'æ'=>'a', 'ç'=>'c',
-        'è'=>'e', 'é'=>'e', 'ê'=>'e', 'ë'=>'e', 'ì'=>'i', 'í'=>'i', 'î'=>'i', 'ï'=>'i', 'ð'=>'o', 'ñ'=>'n', 'ò'=>'o', 'ó'=>'o', 'ô'=>'o', 'õ'=>'o',
-        'ö'=>'o', 'ø'=>'o', 'ù'=>'u', 'ú'=>'u', 'û'=>'u', 'ý'=>'y', 'þ'=>'b', 'ÿ'=>'y' );
-		
 		$name = str_replace (' ', '%20', $data['name']);
-		$name = strtr( $name, $unwanted_array );
 		$reference = $data['reference'];
-		$url = $this->getUrlApi().'/items?reference='.$reference.'&name='.$name;
+		$url = $this->getUrlApi().'/items?reference='.$reference;
 		$make_call = $this->callApi('GET', $url);
 		$response = json_decode($make_call, true);
 		return $response;
@@ -115,6 +108,7 @@ class ApiAlegra extends PDO {
 	public function updateItem($data) {
 		$url = $this->getUrlApi()."/items"."/".$data["id"];
 		unset($data['id']);
+		unset($data['type']);
 		$make_call = $this->callApi('PUT', $url, json_encode($data));
 		$response = json_decode($make_call, true);
 		return $response;
@@ -126,7 +120,7 @@ class ApiAlegra extends PDO {
 		$depeQuantity = $data["depeQuantity"];
 		$name = $data["name"];
 		$nameTipoProducto = $data["nameTipoProducto"];
-		$reference = $this->getPreReference().$idPinchetas;
+		$reference = $this->getPreReference().$idPinchetas."A";
 		$price = $data["price"];
 		$unitCost = $data["cost"];
 		$unit = "unit";
@@ -137,6 +131,7 @@ class ApiAlegra extends PDO {
 		$maxQuantity = 1000;
 		$idCategory = $this->getIdCategory($nameTipoProducto);
 		
+
 		$item = array(
       		"idPinchetas" => $idPinchetas,
 			"id" => $idAlegra,
@@ -146,7 +141,7 @@ class ApiAlegra extends PDO {
 			"quantity" => $depeQuantity,
 			"type" =>  $type,
 			"itemCategory" => array(
-				"id" => 1
+				"id" => $idCategory
 			),
 			"inventory" => array(
 				"unit" => $unit,
@@ -170,6 +165,7 @@ class ApiAlegra extends PDO {
 
 		$sql = $conexion->prepare(" select 
 			prod.prod_id as id, 
+			prod.prod_id as idPinchetas, 
 			prod.prod_descripcion as name, 
 			prod.prod_precio as price, 
 			prod.prod_costo as cost,
@@ -199,16 +195,19 @@ class ApiAlegra extends PDO {
 				$response["quantity"] = $valor["quantity"];
 				$response["depeQuantity"] = $valor["depeQuantity"];
 				$response["cost"] = $valor["cost"];
+				$response["nameTipoProducto"] = $valor["nameTipoProducto"];
 				$itemNew = $this->makeItem($response);
 				$response = $this->insertItem($itemNew);
 				$itemNew["id"] = $response["id"];
 			} else {
 				$response = $response[0];
 				$response["idPinchetas"] = $valor["id"];
+				$response["name"] = $valor["name"];
 				$response["price"] = $valor["price"];
 				$response["quantity"] = $valor["quantity"];
 				$response["depeQuantity"] = $valor["depeQuantity"];
 				$response["cost"] = $valor["cost"];
+				$response["nameTipoProducto"] = $valor["nameTipoProducto"];
 				$itemNew = $this->makeItem($response);
 				$response = $this->updateItem($itemNew);
 			}
