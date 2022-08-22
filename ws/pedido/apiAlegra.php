@@ -28,6 +28,19 @@ class ApiAlegra extends PDO {
 		$url = $this->getUrlApi().'/item-categories?query='.$query;
 		$make_call = $this->callApi('GET', $url);
 		$response = json_decode($make_call, true);
+		if(empty($response)) {
+			$obj = array(
+				"name" => str_replace('%20', ' ', $query)
+			);
+			$response = array($this->insertCategoryItem($obj));
+		}
+		return $response;
+	}
+	
+	public function insertCategoryItem($data) {
+		$url = $this->getUrlApi().'/item-categories';
+		$make_call = $this->callApi('POST', $url, json_encode($data));
+		$response = json_decode($make_call, true);
 		return $response;
 	}
 	
@@ -299,6 +312,7 @@ class ApiAlegra extends PDO {
 		// unset($data['id']);
 		$make_call = $this->callApi('POST', $url, json_encode($data));
 		$response = json_decode($make_call, true);
+		// print_r($response);
 		return $response;
 	}
 }
