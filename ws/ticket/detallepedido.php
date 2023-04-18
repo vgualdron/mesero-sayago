@@ -29,8 +29,8 @@ function printCommand($frm, $type) {
     if ($flagBebidas) {
         printTicket($mesa, $producto, $pedido, $type, "BEBIDAS-PRINTER");
     }
-    if ($flagKiosko) {
-        printTicket($mesa, $producto, $pedido, $type, "KIOSCO-PRINTER");
+    if ($flagKiosko || $flagBebidas) {
+        printTicket($mesa, $producto, $pedido, $type, "CHOZA-PRINTER");
     }
     printTicket($mesa, $producto, $pedido, $type, "POS-80");
 }

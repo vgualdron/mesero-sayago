@@ -51,8 +51,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($flagBebidas) {
         printCommand($mesa, $productos, "BEBIDAS-PRINTER");
     }
-    if ($flagKiosko) {
-        printCommand($mesa, $productos, "KIOSCO-PRINTER");
+    if ($flagKiosko || $flagBebidas) {
+        printCommand($mesa, $productos, "CHOZA-PRINTER");
     }
     printCommand($mesa, $productos, "POS-80");
 }

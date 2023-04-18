@@ -46,13 +46,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 	
 	if ($pos === false) {
-		if ($numeroMesa >= 25 && $numeroMesa <= 45) {
+		if ($numeroMesa >= 25 && $numeroMesa <= 51) {
 			printInvoice($frm, 'SEGUNDO-PISO-PRINTER', $tienePropina);
 		} else {
 			printInvoice($frm, 'POS-80', $tienePropina);
 		}
 	} else {
-		printInvoice($frm, 'KIOSCO-PRINTER', $tienePropina);
+		printInvoice($frm, 'CHOZA-PRINTER', $tienePropina);
 	}
 
 	
@@ -260,12 +260,20 @@ function printInvoice($frm, $printerName, $tienePropina = false) {
     $printer->text("------------------------------------------------\n");
     
     $printer->text("    BASE      %          IVA      %       ICO   \n");
-    
-    // $base = $total - ($total * 0.08);
-    $base = $total;
+
+	/*-------------------------------------------------*/
+	$porcentajeIco = 0.00;
+	$fecha_actual = strtotime(date("d-m-Y",time()));
+	$fecha_entrada = strtotime("31-12-2022");
+	
+	if($fecha_actual > $fecha_entrada) {
+		$porcentajeIco = 0.08;
+	}
+    $base = $total - ($total * $porcentajeIco);
     $iva = 0;
-    // $ico = ($total * 0.08);
-    $ico = ($total * 0);
+    $ico = ($total * $porcentajeIco);
+	/*-------------------------------------------------*/
+
     $printer->text(number_format($base, 2, ',', '.') ."    0 " . "         0.00    " . "  8   " . number_format($ico, 2, ',', '.') . "\n");
     $printer->text("-------------  ----------------  ---------------\n");
     $printer->setEmphasis(true);
@@ -280,9 +288,55 @@ function printInvoice($frm, $printerName, $tienePropina = false) {
     $printer->text("------------------------------------------------\n");
 
     $printer->text("Estamos para servirle. Gracias por su compra.\n");
+	
+	$printer->text("------------------------------------------------\n");
+	
+	
+	/*
+        Ahora vamos a imprimirla encuesta
+    */
+    $printer->feed(3);
+    $printer->setEmphasis(true);
+    $printer->setTextSize(2,1);
+    $printer->text("Encuesta de Satisfacción \n");
+	$printer->setEmphasis(false);
+    $printer->setTextSize(1,1);
+	$printer->setJustification(Printer::JUSTIFY_LEFT);
+    $printer->text("Hola, estamos interesados en ofrecer siempre \n");
+	$printer->text("calidad en nuestro servicio. Por favor ayúdanos con 3 preguntas. \n");
+	$printer->text("\n");
+   
+	$printer->text("* Como califica la atención del Asesor de mesa? \n");
+	$printer->text("Bueno_____     Regular_____     Malo_____ \n");
+	$printer->text("\n");
+	
+	$printer->text("* Como califica la limpieza del restaurante? \n");
+	$printer->text("Bueno_____     Regular_____     Malo_____ \n");
+	$printer->text("\n");
+	
+	$printer->text("* Alguna sugerencia en general? \n");
+	$printer->text("_____________________________________________ \n");
+	$printer->text("_____________________________________________ \n");
+	$printer->text("\n");
+   
+    $printer->feed(1);
+    $printer->setTextSize(1,1);
+    $printer->setJustification(Printer::JUSTIFY_LEFT);
+  
+	$printer->text("FECHA     : " . $fecha. " HORA " . $hora . "\n");
+   
+   
+    $printer->selectPrintMode();
+    // $printer->text("Otra linea" . "\n");
+    #La fecha también
+   
+
+    $printer->selectPrintMode();
+    $printer->text("------------------------------------------------\n");
+
 
     $printer->feed(2);
     $printer->cut();
     $printer->close();
 }
-?>
+
