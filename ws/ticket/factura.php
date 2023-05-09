@@ -267,11 +267,11 @@ function printInvoice($frm, $printerName, $tienePropina = false) {
 	$fecha_entrada = strtotime("31-12-2022");
 	
 	if($fecha_actual > $fecha_entrada) {
-		$porcentajeIco = 0.08;
+		$porcentajeIco = 1.08;
 	}
-    $base = $total - ($total * $porcentajeIco);
+    $ico = $total - ($total / $porcentajeIco);
     $iva = 0;
-    $ico = ($total * $porcentajeIco);
+    $base = ($total / $porcentajeIco);
 	/*-------------------------------------------------*/
 
     $printer->text(number_format($base, 2, ',', '.') ."    0 " . "         0.00    " . "  8   " . number_format($ico, 2, ',', '.') . "\n");

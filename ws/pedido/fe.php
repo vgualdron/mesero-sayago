@@ -41,6 +41,8 @@ try {
         "idAccount" => 1, // caja general
         "date" => $date
       );
+	  
+	  $dataResolution = $apiAlegra->getResolution('FES');
 
       $itemsInvoice = $apiAlegra->makeItemsInvoice($id);
       $paymentsInvoice = $apiAlegra->makePaymentsInvoice($dataPayment);
@@ -54,7 +56,8 @@ try {
         "warehouse" => $warehouseInvoice,
         "payments" => $paymentsInvoice,
         "paymentForm" => "CASH",
-        "paymentMethod" => $tipoPago
+        "paymentMethod" => $tipoPago,
+        "numberTemplate" => $dataResolution
       );
 	 
 
